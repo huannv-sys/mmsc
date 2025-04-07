@@ -11,6 +11,7 @@ import Wireless from "@/pages/wireless";
 import Capsman from "@/pages/capsman";
 import Clients from "@/pages/clients";
 import TrafficAnalysis from "@/pages/traffic-analysis";
+import Rules from "@/pages/rules";
 import NotFound from "@/pages/not-found";
 import AppLayout from "@/components/layout/AppLayout";
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/reports" component={PerformanceReports} />
         <Route path="/events" component={EventHistory} />
         <Route path="/traffic-analysis" component={TrafficAnalysis} />
+        <Route path="/rules" component={Rules} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
