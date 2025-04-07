@@ -15,7 +15,6 @@ import {
 } from "./services";
 import { rulesService } from "./services/rules";
 import { rulesRouter } from "./routes/rules";
-import { setupSecurityRoutes } from "./routes/security";
 import * as discoveryService from "./services/discovery";
 import * as deviceIdentificationService from "./services/device-identification";
 import * as deviceClassifierService from "./services/device-classifier";
@@ -1858,9 +1857,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/apitest', (req, res) => {
     res.json({ message: 'API Test Working' });
   });
-  
-  // Khởi tạo router bảo mật
-  setupSecurityRoutes(router);
   
   // Sử dụng router của rules
   router.use("/rules", rulesRouter);
