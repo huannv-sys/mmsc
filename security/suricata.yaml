@@ -1,0 +1,125 @@
+%YAML 1.1
+---
+# Suricata cấu hình cơ bản cho việc giám sát mạng MikroTik
+
+vars:
+  # Cấu hình các giá trị trong mạng nội bộ
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    EXTERNAL_NET: "!$HOME_NET"
+    HTTP_SERVERS: "$HOME_NET"
+    SMTP_SERVERS: "$HOME_NET"
+    SQL_SERVERS: "$HOME_NET"
+    DNS_SERVERS: "$HOME_NET"
+    TELNET_SERVERS: "$HOME_NET"
+    AIM_SERVERS: "$EXTERNAL_NET"
+    
+  # Cổng phổ biến
+  port-groups:
+    HTTP_PORTS: "80"
+    SHELLCODE_PORTS: "!80"
+    ORACLE_PORTS: 1521
+    SSH_PORTS: 22
+    FTP_PORTS: 21
+    MIKROTIK_WINBOX_PORTS: 8291
+    MIKROTIK_API_PORTS: 8728
+
+# Cấu hình đầu vào cho Suricata
+af-packet:
+  - interface: eth0
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+    tpacket-v3: yes
+
+# Cấu hình đầu ra và phân tích
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: ./security/logs/eve.json
+      types:
+        - alert
+        - http
+        - dns
+        - tls
+        - files
+        - ssh
+        - flow
+        - netflow
+
+# Cấu hình bộ phát hiện
+detect-engine:
+  - profile: medium
+  - custom-values:
+      toclient-src-groups: 2
+      toclient-dst-groups: 2
+      toclient-sp-groups: 2
+      toclient-dp-groups: 3
+      toserver-src-groups: 2
+      toserver-dst-groups: 4
+      toserver-sp-groups: 2
+      toserver-dp-groups: 25
+  - sgh-mpm-context: auto
+  - inspection-recursion-limit: 3000
+
+# Cấu hình các quy tắc
+default-rule-path: ./security/rules
+rule-files:
+  - suricata.rules
+  - mikrotik.rules
+
+# Cấu hình máy chủ và thông báo
+host-mode: auto
+host-os-policy:
+  - windows: [0.0.0.0/0]
+  - bsd: []
+  - bsd-right: []
+  - old-linux: []
+  - linux: [10.0.0.0/8, 192.168.1.0/24, "::1"]
+  - old-solaris: []
+  - solaris: []
+  - hpux10: []
+  - hpux11: []
+  - irix: []
+  - macos: []
+  - vista: []
+  - windows2k3: []
+
+# Cấu hình nâng cao
+action-order:
+  - pass
+  - drop
+  - reject
+  - alert
+
+app-layer:
+  protocols:
+    tls:
+      enabled: yes
+    http:
+      enabled: yes
+    ssh:
+      enabled: yes
+    smtp:
+      enabled: yes
+    dnp3:
+      enabled: no
+    ftp:
+      enabled: yes
+    rdp:
+      enabled: yes
+    nfs:
+      enabled: yes
+    smb:
+      enabled: yes
+    modbus:
+      enabled: no
+    dns:
+      tcp:
+        enabled: yes
+      udp:
+        enabled: yes
+    
+# Ghi chú: Phần này có thể được tùy chỉnh thêm tùy theo nhu cầu cụ thể
