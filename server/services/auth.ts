@@ -1,17 +1,22 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
 import { storage } from '../storage';
 import { InsertUser, InsertSession, User, Login, UserLog, Role } from '@shared/schema';
+import {
+  hashPassword,
+  verifyPassword,
+  generateToken,
+  verifyToken,
+  generateApiKey,
+  verifyApiKey,
+  encryptData,
+  decryptData,
+  generateOTP
+} from './password-security';
 
-// Số lượng vòng băm cho bcrypt
-const SALT_ROUNDS = 10;
+// JWT secret key - nên đặt vào biến môi trường
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
 
 // Thời gian token hết hạn (7 ngày)
 const TOKEN_EXPIRES_IN = '7d';
-
-// JWT secret key - nên đặt vào biến môi trường
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-need-to-be-changed';
 
 class AuthService {
   /**
