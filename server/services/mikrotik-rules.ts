@@ -1,4 +1,5 @@
 import { RouterOSAPI } from 'node-routeros';
+import { mikrotikService } from './mikrotik';
 
 /**
  * Kiểm tra xem lỗi có phải là lỗi kết nối RouterOS đã đóng hay không
@@ -23,6 +24,100 @@ function isConnectionError(error: any): boolean {
  * Đối tượng chứa các hàm xử lý liên quan đến quản lý rules trên thiết bị MikroTik
  */
 export const mikrotikRulesService = {
+  /**
+   * Lấy danh sách firewall rules (phương thức tương thích với deviceId)
+   * @param deviceId ID thiết bị cần lấy rules
+   * @returns Danh sách firewall rules
+   */
+  async getFirewallRulesByDeviceId(deviceId: number): Promise<any[]> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return [];
+      }
+      return this.getFirewallRules(client);
+    } catch (error) {
+      console.error('Error getting firewall rules by device ID:', error);
+      return [];
+    }
+  },
+  
+  /**
+   * Lấy danh sách NAT rules (phương thức tương thích với deviceId)
+   * @param deviceId ID thiết bị cần lấy rules
+   * @returns Danh sách NAT rules
+   */
+  async getNatRulesByDeviceId(deviceId: number): Promise<any[]> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return [];
+      }
+      return this.getNatRules(client);
+    } catch (error) {
+      console.error('Error getting NAT rules by device ID:', error);
+      return [];
+    }
+  },
+  
+  /**
+   * Lấy danh sách mangle rules (phương thức tương thích với deviceId)
+   * @param deviceId ID thiết bị cần lấy rules
+   * @returns Danh sách mangle rules
+   */
+  async getMangleRulesByDeviceId(deviceId: number): Promise<any[]> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return [];
+      }
+      return this.getMangleRules(client);
+    } catch (error) {
+      console.error('Error getting mangle rules by device ID:', error);
+      return [];
+    }
+  },
+  
+  /**
+   * Lấy danh sách queue rules (phương thức tương thích với deviceId)
+   * @param deviceId ID thiết bị cần lấy rules
+   * @returns Danh sách queue rules
+   */
+  async getQueueRulesByDeviceId(deviceId: number): Promise<{ simpleQueues: any[], treeQueues: any[] }> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return { simpleQueues: [], treeQueues: [] };
+      }
+      return this.getQueueRules(client);
+    } catch (error) {
+      console.error('Error getting queue rules by device ID:', error);
+      return { simpleQueues: [], treeQueues: [] };
+    }
+  },
+  
+  /**
+   * Lấy danh sách routing rules (phương thức tương thích với deviceId)
+   * @param deviceId ID thiết bị cần lấy rules
+   * @returns Danh sách routing rules
+   */
+  async getRoutingRulesByDeviceId(deviceId: number): Promise<{ routes: any[], bgp: any[], ospf: any[] }> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return { routes: [], bgp: [], ospf: [] };
+      }
+      return this.getRoutingRules(client);
+    } catch (error) {
+      console.error('Error getting routing rules by device ID:', error);
+      return { routes: [], bgp: [], ospf: [] };
+    }
+  },
   /**
    * Lấy danh sách firewall rules
    * @param api Đối tượng API đã kết nối
@@ -177,6 +272,26 @@ export const mikrotikRulesService = {
    * @param ruleData Dữ liệu rule mới
    * @returns Rule đã tạo
    */
+  /**
+   * Tạo mới firewall rule sử dụng deviceId
+   * @param deviceId ID của thiết bị
+   * @param ruleData Dữ liệu rule mới
+   * @returns Rule đã tạo
+   */
+  async createFirewallRuleByDeviceId(deviceId: number, ruleData: any): Promise<any> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return {};
+      }
+      return this.createFirewallRule(client, ruleData);
+    } catch (error) {
+      console.error('Error creating firewall rule by device ID:', error);
+      return {};
+    }
+  },
+  
   async createFirewallRule(api: RouterOSAPI | null, ruleData: any): Promise<any> {
     if (!api) {
       throw new Error('API connection is null');
@@ -204,6 +319,111 @@ export const mikrotikRulesService = {
    * @param disabled Trạng thái kích hoạt (true: vô hiệu hóa, false: kích hoạt)
    * @returns Kết quả cập nhật
    */
+  /**
+   * Cập nhật trạng thái firewall rule (bật/tắt) sử dụng deviceId
+   * @param deviceId ID của thiết bị
+   * @param ruleId ID của rule
+   * @param disabled Trạng thái kích hoạt (true: vô hiệu hóa, false: kích hoạt)
+   * @returns Kết quả cập nhật
+   */
+  async toggleFirewallRuleByDeviceId(deviceId: number, ruleId: string, disabled: boolean): Promise<any> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return {};
+      }
+      return this.toggleFirewallRule(client, ruleId, disabled);
+    } catch (error) {
+      console.error('Error toggling firewall rule by device ID:', error);
+      return {};
+    }
+  },
+  
+  /**
+   * Cập nhật trạng thái NAT rule (bật/tắt) sử dụng deviceId
+   * @param deviceId ID của thiết bị
+   * @param ruleId ID của rule
+   * @param disabled Trạng thái kích hoạt (true: vô hiệu hóa, false: kích hoạt)
+   * @returns Kết quả cập nhật
+   */
+  async toggleNatRuleByDeviceId(deviceId: number, ruleId: string, disabled: boolean): Promise<any> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return {};
+      }
+      return this.toggleNatRule(client, ruleId, disabled);
+    } catch (error) {
+      console.error('Error toggling NAT rule by device ID:', error);
+      return {};
+    }
+  },
+  
+  /**
+   * Cập nhật trạng thái mangle rule (bật/tắt) sử dụng deviceId
+   * @param deviceId ID của thiết bị
+   * @param ruleId ID của rule
+   * @param disabled Trạng thái kích hoạt (true: vô hiệu hóa, false: kích hoạt)
+   * @returns Kết quả cập nhật
+   */
+  async toggleMangleRuleByDeviceId(deviceId: number, ruleId: string, disabled: boolean): Promise<any> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return {};
+      }
+      return this.toggleMangleRule(client, ruleId, disabled);
+    } catch (error) {
+      console.error('Error toggling mangle rule by device ID:', error);
+      return {};
+    }
+  },
+  
+  /**
+   * Cập nhật trạng thái queue rule (bật/tắt) sử dụng deviceId
+   * @param deviceId ID của thiết bị
+   * @param ruleId ID của rule
+   * @param disabled Trạng thái kích hoạt (true: vô hiệu hóa, false: kích hoạt)
+   * @returns Kết quả cập nhật
+   */
+  async toggleQueueRuleByDeviceId(deviceId: number, ruleId: string, disabled: boolean): Promise<any> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return {};
+      }
+      return this.toggleQueueRule(client, ruleId, disabled);
+    } catch (error) {
+      console.error('Error toggling queue rule by device ID:', error);
+      return {};
+    }
+  },
+  
+  /**
+   * Cập nhật trạng thái routing rule (bật/tắt) sử dụng deviceId
+   * @param deviceId ID của thiết bị
+   * @param ruleId ID của rule
+   * @param disabled Trạng thái kích hoạt (true: vô hiệu hóa, false: kích hoạt)
+   * @returns Kết quả cập nhật
+   */
+  async toggleRoutingRuleByDeviceId(deviceId: number, ruleId: string, disabled: boolean): Promise<any> {
+    try {
+      const client = await mikrotikService.getClientForDevice(deviceId);
+      if (!client) {
+        console.error(`Không thể kết nối tới thiết bị ID ${deviceId}`);
+        return {};
+      }
+      return this.toggleRoutingRule(client, ruleId, disabled);
+    } catch (error) {
+      console.error('Error toggling routing rule by device ID:', error);
+      return {};
+    }
+  },
+  
   async toggleFirewallRule(api: RouterOSAPI | null, ruleId: string, disabled: boolean): Promise<any> {
     if (!api) {
       throw new Error('API connection is null');

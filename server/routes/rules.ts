@@ -478,7 +478,7 @@ rulesRouter.post('/devices/:id/rules/firewall', async (req: Request, res: Respon
     }
     
     try {
-      const newRule = await mikrotikRulesService.createFirewallRule(api, ruleData);
+      const newRule = await mikrotikRulesService.createFirewallRuleByDeviceId(deviceId, ruleData);
       
       // Đóng kết nối API
       await api.close();
@@ -554,19 +554,19 @@ rulesRouter.put('/devices/:id/rules/:type/:ruleId/toggle', async (req: Request, 
       let result;
       switch (ruleType) {
         case 'firewall':
-          result = await mikrotikRulesService.toggleFirewallRule(api, ruleId, disabled);
+          result = await mikrotikRulesService.toggleFirewallRuleByDeviceId(deviceId, ruleId, disabled);
           break;
         case 'nat':
-          result = await mikrotikRulesService.toggleNatRule(api, ruleId, disabled);
+          result = await mikrotikRulesService.toggleNatRuleByDeviceId(deviceId, ruleId, disabled);
           break;
         case 'mangle':
-          result = await mikrotikRulesService.toggleMangleRule(api, ruleId, disabled);
+          result = await mikrotikRulesService.toggleMangleRuleByDeviceId(deviceId, ruleId, disabled);
           break;
         case 'queue':
-          result = await mikrotikRulesService.toggleQueueRule(api, ruleId, disabled);
+          result = await mikrotikRulesService.toggleQueueRuleByDeviceId(deviceId, ruleId, disabled);
           break;
         case 'routing':
-          result = await mikrotikRulesService.toggleRoutingRule(api, ruleId, disabled);
+          result = await mikrotikRulesService.toggleRoutingRuleByDeviceId(deviceId, ruleId, disabled);
           break;
         default:
           throw new Error(`Không hỗ trợ loại rule "${ruleType}"`);
