@@ -90,29 +90,29 @@ const TrafficAnalysisPage = () => {
     reader.onload = async (e) => {
       const content = e.target?.result as string;
       setFileContent(content);
-      
+
       try {
         // Call API to analyze log content
         const response = await axios.post("/api/traffic-analysis/analyze", {
-          content
+          content,
         });
-        
+
         if (response.data.success) {
           setTrafficData(response.data.data.trafficData);
           setFilteredData(response.data.data.trafficData);
           setStats(response.data.data.stats);
           setFileUploaded(true);
           setErrorMessage(null);
-          
+
           // Set date range based on data
           if (response.data.data.trafficData.length > 0) {
             const timestamps = response.data.data.trafficData.map(
-              (item: any) => new Date(item.timestamp)
+              (item: any) => new Date(item.timestamp),
             );
             setStartDate(new Date(Math.min(...timestamps)));
             setEndDate(new Date(Math.max(...timestamps)));
           }
-          
+
           // Load initial visualizations
           loadVisualizations(response.data.data.trafficData);
         } else {
@@ -129,39 +129,51 @@ const TrafficAnalysisPage = () => {
   const loadVisualizations = async (data: TrafficData[]) => {
     try {
       // Load bandwidth chart data
-      const bandwidthResponse = await axios.post("/api/traffic-analysis/bandwidth", {
-        data,
-        resampleRule: timeInterval
-      });
+      const bandwidthResponse = await axios.post(
+        "/api/traffic-analysis/bandwidth",
+        {
+          data,
+          resampleRule: timeInterval,
+        },
+      );
       setBandwidthData(bandwidthResponse.data);
-      
+
       // Load connection chart data
-      const connectionResponse = await axios.post("/api/traffic-analysis/connections", {
-        data,
-        resampleRule: timeInterval
-      });
+      const connectionResponse = await axios.post(
+        "/api/traffic-analysis/connections",
+        {
+          data,
+          resampleRule: timeInterval,
+        },
+      );
       setConnectionData(connectionResponse.data);
-      
+
       // Load protocol distribution data
-      const protocolResponse = await axios.post("/api/traffic-analysis/protocols", {
-        data
-      });
+      const protocolResponse = await axios.post(
+        "/api/traffic-analysis/protocols",
+        {
+          data,
+        },
+      );
       setProtocolData(protocolResponse.data);
-      
+
       // Load top IPs data
       const topIpsResponse = await axios.post("/api/traffic-analysis/top-ips", {
         data,
         ipColumn: ipDirection,
-        topN
+        topN,
       });
       setTopIpsData(topIpsResponse.data);
-      
+
       // Load top ports data
-      const topPortsResponse = await axios.post("/api/traffic-analysis/top-ports", {
-        data,
-        metric: "connections",
-        topN
-      });
+      const topPortsResponse = await axios.post(
+        "/api/traffic-analysis/top-ports",
+        {
+          data,
+          metric: "connections",
+          topN,
+        },
+      );
       setTopPortsData(topPortsResponse.data);
     } catch (error) {
       console.error("Error loading visualizations:", error);
@@ -170,7 +182,7 @@ const TrafficAnalysisPage = () => {
 
   const applyFilters = () => {
     let filtered = [...trafficData];
-    
+
     // Apply date filters
     if (startDate && endDate) {
       filtered = filtered.filter((item) => {
@@ -178,7 +190,7 @@ const TrafficAnalysisPage = () => {
         return timestamp >= startDate && timestamp <= endDate;
       });
     }
-    
+
     // Apply IP filter
     if (ipFilter) {
       filtered = filtered.filter((item) => {
@@ -188,14 +200,12 @@ const TrafficAnalysisPage = () => {
         );
       });
     }
-    
+
     // Apply protocol filter
     if (protocolFilter !== "All") {
-      filtered = filtered.filter(
-        (item) => item.protocol === protocolFilter
-      );
+      filtered = filtered.filter((item) => item.protocol === protocolFilter);
     }
-    
+
     setFilteredData(filtered);
     loadVisualizations(filtered);
   };
@@ -211,60 +221,74 @@ const TrafficAnalysisPage = () => {
 
   const updateTimeInterval = (interval: string) => {
     setTimeInterval(interval);
-    
+
     // Reload bandwidth and connection charts with new interval
-    axios.post("/api/traffic-analysis/bandwidth", {
-      data: filteredData,
-      resampleRule: interval
-    }).then(response => setBandwidthData(response.data));
-    
-    axios.post("/api/traffic-analysis/connections", {
-      data: filteredData,
-      resampleRule: interval
-    }).then(response => setConnectionData(response.data));
+    axios
+      .post("/api/traffic-analysis/bandwidth", {
+        data: filteredData,
+        resampleRule: interval,
+      })
+      .then((response) => setBandwidthData(response.data));
+
+    axios
+      .post("/api/traffic-analysis/connections", {
+        data: filteredData,
+        resampleRule: interval,
+      })
+      .then((response) => setConnectionData(response.data));
   };
-  
+
   const updateIpDirection = (direction: string) => {
     setIpDirection(direction);
-    
+
     // Reload top IPs with new direction
-    axios.post("/api/traffic-analysis/top-ips", {
-      data: filteredData,
-      ipColumn: direction,
-      topN
-    }).then(response => setTopIpsData(response.data));
+    axios
+      .post("/api/traffic-analysis/top-ips", {
+        data: filteredData,
+        ipColumn: direction,
+        topN,
+      })
+      .then((response) => setTopIpsData(response.data));
   };
-  
+
   const updateTopN = (n: number) => {
     setTopN(n);
-    
+
     // Reload top IPs and ports with new count
-    axios.post("/api/traffic-analysis/top-ips", {
-      data: filteredData,
-      ipColumn: ipDirection,
-      topN: n
-    }).then(response => setTopIpsData(response.data));
-    
-    axios.post("/api/traffic-analysis/top-ports", {
-      data: filteredData,
-      metric: "connections",
-      topN: n
-    }).then(response => setTopPortsData(response.data));
+    axios
+      .post("/api/traffic-analysis/top-ips", {
+        data: filteredData,
+        ipColumn: ipDirection,
+        topN: n,
+      })
+      .then((response) => setTopIpsData(response.data));
+
+    axios
+      .post("/api/traffic-analysis/top-ports", {
+        data: filteredData,
+        metric: "connections",
+        topN: n,
+      })
+      .then((response) => setTopPortsData(response.data));
   };
-  
+
   const exportData = () => {
     let exportData: string;
     let mimeType: string;
     let fileName: string;
-    
+
     if (exportFormat === "csv") {
       // Generate CSV
       const headers = Object.keys(filteredData[0] || {}).join(",");
-      const rows = filteredData.map(item => 
-        Object.values(item).map(val => 
-          typeof val === "string" && val.includes(",") ? `"${val}"` : val
-        ).join(",")
-      ).join("\n");
+      const rows = filteredData
+        .map((item) =>
+          Object.values(item)
+            .map((val) =>
+              typeof val === "string" && val.includes(",") ? `"${val}"` : val,
+            )
+            .join(","),
+        )
+        .join("\n");
       exportData = `${headers}\n${rows}`;
       mimeType = "text/csv";
       fileName = "mikrotik_traffic_analysis.csv";
@@ -276,7 +300,7 @@ const TrafficAnalysisPage = () => {
     } else {
       return; // Unsupported format
     }
-    
+
     // Create download link
     const blob = new Blob([exportData], { type: mimeType });
     const url = URL.createObjectURL(blob);
@@ -313,19 +337,19 @@ const TrafficAnalysisPage = () => {
                     onChange={handleFileUpload}
                   />
                 </div>
-                
+
                 {errorMessage && (
                   <div className="text-red-500 text-sm mt-2">
                     {errorMessage}
                   </div>
                 )}
-                
+
                 {fileUploaded && (
                   <div className="space-y-4">
                     <Separator />
                     <div>
                       <h3 className="text-lg font-medium">Bộ lọc</h3>
-                      
+
                       <div className="mt-3">
                         <Label>Khoảng thời gian</Label>
                         <div className="grid grid-cols-2 gap-2 mt-1">
@@ -341,7 +365,7 @@ const TrafficAnalysisPage = () => {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="mt-3">
                         <Label htmlFor="ip-filter">Lọc theo IP</Label>
                         <Input
@@ -351,7 +375,7 @@ const TrafficAnalysisPage = () => {
                           onChange={(e) => setIpFilter(e.target.value)}
                         />
                       </div>
-                      
+
                       {stats && (
                         <div className="mt-3">
                           <Label htmlFor="protocol-filter">Giao thức</Label>
@@ -369,13 +393,13 @@ const TrafficAnalysisPage = () => {
                                   <SelectItem key={protocol} value={protocol}>
                                     {protocol}
                                   </SelectItem>
-                                )
+                                ),
                               )}
                             </SelectContent>
                           </Select>
                         </div>
                       )}
-                      
+
                       <div className="flex space-x-2 mt-4">
                         <Button onClick={applyFilters}>Áp dụng</Button>
                         <Button variant="outline" onClick={resetFilters}>
@@ -414,7 +438,7 @@ const TrafficAnalysisPage = () => {
                 <TabsTrigger value="top-users">Top người dùng</TabsTrigger>
                 <TabsTrigger value="export">Xuất dữ liệu</TabsTrigger>
               </TabsList>
-              
+
               {/* Overview Tab */}
               <TabsContent value="overview">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -426,7 +450,7 @@ const TrafficAnalysisPage = () => {
                       <p className="text-sm text-gray-500">Tổng số bản ghi</p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardContent className="pt-6">
                       <div className="text-2xl font-bold">
@@ -437,7 +461,7 @@ const TrafficAnalysisPage = () => {
                       <p className="text-sm text-gray-500">Tổng lưu lượng</p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardContent className="pt-6">
                       <div className="text-2xl font-bold">
@@ -446,7 +470,7 @@ const TrafficAnalysisPage = () => {
                       <p className="text-sm text-gray-500">Nguồn duy nhất</p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardContent className="pt-6">
                       <div className="text-2xl font-bold">
@@ -456,7 +480,7 @@ const TrafficAnalysisPage = () => {
                     </CardContent>
                   </Card>
                 </div>
-                
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                   <Card>
                     <CardHeader>
@@ -474,11 +498,12 @@ const TrafficAnalysisPage = () => {
                                 return `${date.getDate()}/${date.getMonth() + 1} ${date.getHours()}:00`;
                               }}
                             />
-                            <YAxis
-                              name="Lưu lượng (MB)"
-                            />
-                            <Tooltip 
-                              formatter={(value) => [`${value} MB`, "Lưu lượng"]}
+                            <YAxis name="Lưu lượng (MB)" />
+                            <Tooltip
+                              formatter={(value) => [
+                                `${value} MB`,
+                                "Lưu lượng",
+                              ]}
                               labelFormatter={(timestamp) => {
                                 const date = new Date(timestamp);
                                 return date.toLocaleString();
@@ -497,7 +522,7 @@ const TrafficAnalysisPage = () => {
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardHeader>
                       <CardTitle>Phân phối giao thức</CardTitle>
@@ -523,10 +548,10 @@ const TrafficAnalysisPage = () => {
                                 />
                               ))}
                             </Pie>
-                            <Tooltip 
+                            <Tooltip
                               formatter={(value, name, props) => [
                                 value,
-                                `Kết nối ${props.payload.protocol}`
+                                `Kết nối ${props.payload.protocol}`,
                               ]}
                             />
                             <Legend />
@@ -537,7 +562,7 @@ const TrafficAnalysisPage = () => {
                   </Card>
                 </div>
               </TabsContent>
-              
+
               {/* Bandwidth Analysis Tab */}
               <TabsContent value="bandwidth">
                 <Card className="mb-6">
@@ -564,7 +589,7 @@ const TrafficAnalysisPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={bandwidthData}>
@@ -579,13 +604,13 @@ const TrafficAnalysisPage = () => {
                                 return `${date.getDate()}/${date.getMonth() + 1}`;
                               } else {
                                 return `W${Math.ceil(
-                                  (date.getDate() + 6 - date.getDay()) / 7
+                                  (date.getDate() + 6 - date.getDay()) / 7,
                                 )}`;
                               }
                             }}
                           />
                           <YAxis name="Lưu lượng (MB)" />
-                          <Tooltip 
+                          <Tooltip
                             formatter={(value) => [`${value} MB`, "Lưu lượng"]}
                             labelFormatter={(timestamp) => {
                               const date = new Date(timestamp);
@@ -605,7 +630,7 @@ const TrafficAnalysisPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Lưu lượng theo IP</CardTitle>
@@ -628,7 +653,7 @@ const TrafficAnalysisPage = () => {
                         </div>
                       </RadioGroup>
                     </div>
-                    
+
                     <div className="mb-4">
                       <Label htmlFor="top-n">Số lượng hiển thị</Label>
                       <div className="flex items-center space-x-2">
@@ -644,7 +669,7 @@ const TrafficAnalysisPage = () => {
                         <span>IP</span>
                       </div>
                     </div>
-                    
+
                     <div className="h-96">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
@@ -660,7 +685,7 @@ const TrafficAnalysisPage = () => {
                             width={150}
                             tick={{ fontSize: 12 }}
                           />
-                          <Tooltip 
+                          <Tooltip
                             formatter={(value) => [`${value} MB`, "Lưu lượng"]}
                           />
                           <Legend />
@@ -675,7 +700,7 @@ const TrafficAnalysisPage = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
-              
+
               {/* Connections Tab */}
               <TabsContent value="connections">
                 <Card className="mb-6">
@@ -702,7 +727,7 @@ const TrafficAnalysisPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={connectionData}>
@@ -717,13 +742,13 @@ const TrafficAnalysisPage = () => {
                                 return `${date.getDate()}/${date.getMonth() + 1}`;
                               } else {
                                 return `W${Math.ceil(
-                                  (date.getDate() + 6 - date.getDay()) / 7
+                                  (date.getDate() + 6 - date.getDay()) / 7,
                                 )}`;
                               }
                             }}
                           />
                           <YAxis name="Số kết nối" />
-                          <Tooltip 
+                          <Tooltip
                             formatter={(value) => [value, "Kết nối"]}
                             labelFormatter={(timestamp) => {
                               return new Date(timestamp).toLocaleString();
@@ -740,7 +765,7 @@ const TrafficAnalysisPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Top dịch vụ/cổng</CardTitle>
@@ -761,7 +786,7 @@ const TrafficAnalysisPage = () => {
                         <span>cổng</span>
                       </div>
                     </div>
-                    
+
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
@@ -776,9 +801,7 @@ const TrafficAnalysisPage = () => {
                             dataKey="port"
                             tick={{ fontSize: 12 }}
                           />
-                          <Tooltip 
-                            formatter={(value) => [value, "Kết nối"]}
-                          />
+                          <Tooltip formatter={(value) => [value, "Kết nối"]} />
                           <Legend />
                           <Bar
                             dataKey="value"
@@ -791,7 +814,7 @@ const TrafficAnalysisPage = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
-              
+
               {/* Top Users/Services Tab */}
               <TabsContent value="top-users">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -815,12 +838,15 @@ const TrafficAnalysisPage = () => {
                             <Label htmlFor="source-top">Nguồn</Label>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="dst_ip" id="destination-top" />
+                            <RadioGroupItem
+                              value="dst_ip"
+                              id="destination-top"
+                            />
                             <Label htmlFor="destination-top">Đích</Label>
                           </div>
                         </RadioGroup>
                       </div>
-                      
+
                       <div className="h-96">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart
@@ -836,8 +862,11 @@ const TrafficAnalysisPage = () => {
                               width={150}
                               tick={{ fontSize: 12 }}
                             />
-                            <Tooltip 
-                              formatter={(value) => [`${value} MB`, "Lưu lượng"]}
+                            <Tooltip
+                              formatter={(value) => [
+                                `${value} MB`,
+                                "Lưu lượng",
+                              ]}
                             />
                             <Legend />
                             <Bar
@@ -850,7 +879,7 @@ const TrafficAnalysisPage = () => {
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card>
                     <CardHeader>
                       <CardTitle>Top giao thức</CardTitle>
@@ -871,17 +900,19 @@ const TrafficAnalysisPage = () => {
                                 `${entry.protocol}: ${entry.count}`
                               }
                             >
-                              {protocolData.slice(0, topN).map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={COLORS[index % COLORS.length]}
-                                />
-                              ))}
+                              {protocolData
+                                .slice(0, topN)
+                                .map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={COLORS[index % COLORS.length]}
+                                  />
+                                ))}
                             </Pie>
-                            <Tooltip 
+                            <Tooltip
                               formatter={(value, name, props) => [
                                 value,
-                                `Kết nối ${props.payload.protocol}`
+                                `Kết nối ${props.payload.protocol}`,
                               ]}
                             />
                             <Legend />
@@ -892,7 +923,7 @@ const TrafficAnalysisPage = () => {
                   </Card>
                 </div>
               </TabsContent>
-              
+
               {/* Export Tab */}
               <TabsContent value="export">
                 <Card>
@@ -919,9 +950,9 @@ const TrafficAnalysisPage = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      
+
                       <Button onClick={exportData}>Tạo file xuất</Button>
-                      
+
                       <div className="pt-4">
                         <h3 className="text-lg font-medium mb-2">
                           Xuất biểu đồ
@@ -929,12 +960,18 @@ const TrafficAnalysisPage = () => {
                         <p className="text-sm text-gray-500 mb-4">
                           Chọn biểu đồ để xuất
                         </p>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <Button variant="outline">Lưu lượng theo thời gian</Button>
+                          <Button variant="outline">
+                            Lưu lượng theo thời gian
+                          </Button>
                           <Button variant="outline">Phân phối giao thức</Button>
-                          <Button variant="outline">Top IP theo lưu lượng</Button>
-                          <Button variant="outline">Kết nối theo thời gian</Button>
+                          <Button variant="outline">
+                            Top IP theo lưu lượng
+                          </Button>
+                          <Button variant="outline">
+                            Kết nối theo thời gian
+                          </Button>
                         </div>
                       </div>
                     </div>

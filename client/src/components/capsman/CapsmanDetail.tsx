@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import type { CapsmanAP } from '@shared/schema';
-import { format } from 'date-fns';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import type { CapsmanAP } from "@shared/schema";
+import { format } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   Card,
@@ -11,31 +11,26 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from '@/components/ui/hover-card';
-import { Badge } from '@/components/ui/badge';
-import { 
-  WifiIcon, 
-  SignalIcon, 
-  InfoIcon, 
+} from "@/components/ui/hover-card";
+import { Badge } from "@/components/ui/badge";
+import {
+  WifiIcon,
+  SignalIcon,
+  InfoIcon,
   ServerIcon,
   BarChart4Icon,
   UsersIcon,
-  RouterIcon
-} from 'lucide-react';
-import { LoadingAnimation } from '@/components/ui/loading-animation';
-import { SkeletonPulse } from '@/components/ui/skeleton-pulse';
-import ClientsList from './ClientsList';
+  RouterIcon,
+} from "lucide-react";
+import { LoadingAnimation } from "@/components/ui/loading-animation";
+import { SkeletonPulse } from "@/components/ui/skeleton-pulse";
+import ClientsList from "./ClientsList";
 
 interface CapsmanDetailProps {
   deviceId: number | null;
@@ -43,12 +38,18 @@ interface CapsmanDetailProps {
 }
 
 export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const { data: capsmanAP, isLoading, isRefetching, isError, refetch } = useQuery<any>({
-    queryKey: ['/api/capsman', apId],
+  const {
+    data: capsmanAP,
+    isLoading,
+    isRefetching,
+    isError,
+    refetch,
+  } = useQuery<any>({
+    queryKey: ["/api/capsman", apId],
     queryFn: async () => {
-      const res = await apiRequest('GET', `/api/capsman/${apId}`);
+      const res = await apiRequest("GET", `/api/capsman/${apId}`);
       return res.json();
     },
     enabled: !!apId,
@@ -57,7 +58,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
   // Get status badge with animation
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'running':
+      case "running":
         return (
           <motion.div
             initial={{ scale: 0.9 }}
@@ -74,7 +75,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
             </Badge>
           </motion.div>
         );
-      case 'disabled':
+      case "disabled":
         return (
           <motion.div
             initial={{ scale: 0.9 }}
@@ -91,7 +92,9 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
             animate={{ scale: 1 }}
             transition={{ duration: 0.2 }}
           >
-            <Badge className="bg-gray-400 text-white">{status || 'Không xác định'}</Badge>
+            <Badge className="bg-gray-400 text-white">
+              {status || "Không xác định"}
+            </Badge>
           </motion.div>
         );
     }
@@ -107,10 +110,10 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
         </div>
         <SkeletonPulse width={80} height={28} borderRadius="0.375rem" />
       </div>
-      
+
       <div className="mt-4">
         <SkeletonPulse width={300} height={36} />
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div className="border rounded-lg p-4 space-y-3">
             <SkeletonPulse width={100} height={16} />
@@ -126,7 +129,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
           </div>
         </div>
       </div>
-      
+
       <div className="mt-6">
         <div className="space-y-2 mb-4">
           <SkeletonPulse width={150} height={20} />
@@ -191,12 +194,14 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
         <CardHeader>
           <div className="flex items-center">
             <WifiIcon className="h-5 w-5 mr-2" />
-            <LoadingAnimation variant="dots" text="Đang tải thông tin điểm truy cập..." className="ml-2" />
+            <LoadingAnimation
+              variant="dots"
+              text="Đang tải thông tin điểm truy cập..."
+              className="ml-2"
+            />
           </div>
         </CardHeader>
-        <CardContent>
-          {renderDetailSkeleton()}
-        </CardContent>
+        <CardContent>{renderDetailSkeleton()}</CardContent>
       </Card>
     );
   }
@@ -214,9 +219,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
             Không tìm thấy thông tin hoặc điểm truy cập không tồn tại
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {renderEmptyState()}
-        </CardContent>
+        <CardContent>{renderEmptyState()}</CardContent>
       </Card>
     );
   }
@@ -233,10 +236,11 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
             >
               <CardTitle className="flex items-center gap-2">
                 <RouterIcon className="h-5 w-5 text-blue-500" />
-                {capsmanAP.name || 'Access Point không xác định'}
+                {capsmanAP.name || "Access Point không xác định"}
               </CardTitle>
               <CardDescription>
-                {capsmanAP.identity || 'ID không xác định'} | MAC: {capsmanAP.macAddress}
+                {capsmanAP.identity || "ID không xác định"} | MAC:{" "}
+                {capsmanAP.macAddress}
               </CardDescription>
             </motion.div>
           </div>
@@ -255,13 +259,20 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
         )}
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
+        <Tabs
+          defaultValue="overview"
+          value={activeTab}
+          onValueChange={setActiveTab}
+        >
           <TabsList className="mb-4 grid w-full grid-cols-3">
             <TabsTrigger className="flex items-center gap-2" value="overview">
               <InfoIcon className="h-4 w-4" />
               <span>Tổng quan</span>
             </TabsTrigger>
-            <TabsTrigger className="flex items-center gap-2" value="performance">
+            <TabsTrigger
+              className="flex items-center gap-2"
+              value="performance"
+            >
               <BarChart4Icon className="h-4 w-4" />
               <span>Hiệu suất</span>
             </TabsTrigger>
@@ -270,7 +281,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
               <span>Người dùng ({capsmanAP.clients || 0})</span>
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="overview">
             <div className="grid gap-4 md:grid-cols-2">
               <motion.div
@@ -279,11 +290,11 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <motion.div 
+                <motion.div
                   className="grid grid-cols-2 gap-4"
                   variants={{
                     hidden: { opacity: 0 },
-                    show: { opacity: 1 }
+                    show: { opacity: 1 },
                   }}
                   initial="hidden"
                   animate="show"
@@ -292,33 +303,35 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Trạng thái</h4>
                     <div className="flex items-center gap-2">
-                      <motion.div 
+                      <motion.div
                         className={`h-2 w-2 rounded-full ${
-                          capsmanAP.state === 'running' ? 'bg-green-500' : 'bg-red-500'
+                          capsmanAP.state === "running"
+                            ? "bg-green-500"
+                            : "bg-red-500"
                         }`}
                         animate={
-                          capsmanAP.state === 'running'
-                            ? { 
+                          capsmanAP.state === "running"
+                            ? {
                                 scale: [1, 1.5, 1],
                                 opacity: [0.7, 1, 0.7],
-                              } 
+                              }
                             : {}
                         }
-                        transition={{ 
-                          duration: 2, 
-                          repeat: Infinity, 
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
                         }}
                       />
-                      <span>{capsmanAP.state || 'Không xác định'}</span>
+                      <span>{capsmanAP.state || "Không xác định"}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Địa chỉ IP</h4>
-                    <p>{capsmanAP.ipAddress || 'Không xác định'}</p>
+                    <p>{capsmanAP.ipAddress || "Không xác định"}</p>
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   className="space-y-2"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -328,24 +341,26 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <span className="text-muted-foreground">Model:</span>
-                      <p>{capsmanAP.model || 'Không xác định'}</p>
+                      <p>{capsmanAP.model || "Không xác định"}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Phiên bản:</span>
-                      <p>{capsmanAP.version || 'Không xác định'}</p>
+                      <p>{capsmanAP.version || "Không xác định"}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Serial Number:</span>
-                      <p>{capsmanAP.serialNumber || 'Không xác định'}</p>
+                      <span className="text-muted-foreground">
+                        Serial Number:
+                      </span>
+                      <p>{capsmanAP.serialNumber || "Không xác định"}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Uptime:</span>
-                      <p>{capsmanAP.uptime || 'Không xác định'}</p>
+                      <p>{capsmanAP.uptime || "Không xác định"}</p>
                     </div>
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   className="space-y-2"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -355,23 +370,23 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <span className="text-muted-foreground">Radio Name:</span>
-                      <p>{capsmanAP.radioName || 'Không xác định'}</p>
+                      <p>{capsmanAP.radioName || "Không xác định"}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Radio MAC:</span>
-                      <p>{capsmanAP.radioMac || 'Không xác định'}</p>
+                      <p>{capsmanAP.radioMac || "Không xác định"}</p>
                     </div>
                   </div>
                 </motion.div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="space-y-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.div 
+                <motion.div
                   className="space-y-2"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -380,28 +395,35 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                   <h4 className="text-sm font-medium">Thông tin kết nối</h4>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Lần kết nối cuối:</span>
+                      <span className="text-muted-foreground">
+                        Lần kết nối cuối:
+                      </span>
                       <p>
-                        {capsmanAP.lastSeen 
-                          ? format(new Date(capsmanAP.lastSeen), 'dd/MM/yyyy HH:mm:ss')
-                          : 'Không xác định'}
+                        {capsmanAP.lastSeen
+                          ? format(
+                              new Date(capsmanAP.lastSeen),
+                              "dd/MM/yyyy HH:mm:ss",
+                            )
+                          : "Không xác định"}
                       </p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Số người dùng:</span>
+                      <span className="text-muted-foreground">
+                        Số người dùng:
+                      </span>
                       <p>{capsmanAP.clients || 0}</p>
                     </div>
                   </div>
                 </motion.div>
-                
-                <motion.div 
+
+                <motion.div
                   className="rounded-md border p-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
                   <div className="flex flex-col gap-4">
-                    <motion.div 
+                    <motion.div
                       className="flex justify-between"
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -409,7 +431,9 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                     >
                       <div>
                         <h4 className="text-sm font-medium">Tín hiệu</h4>
-                        <p className="text-sm text-muted-foreground">Cường độ tín hiệu</p>
+                        <p className="text-sm text-muted-foreground">
+                          Cường độ tín hiệu
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <motion.div
@@ -419,25 +443,25 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                             type: "spring",
                             stiffness: 260,
                             damping: 20,
-                            delay: 0.5
+                            delay: 0.5,
                           }}
                         >
                           <SignalIcon className="h-5 w-5 text-blue-500" />
                         </motion.div>
-                        <motion.span 
+                        <motion.span
                           className="font-medium"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.3, delay: 0.6 }}
                         >
-                          {capsmanAP.signalStrength !== undefined 
-                            ? `${capsmanAP.signalStrength} dBm` 
-                            : 'N/A'}
+                          {capsmanAP.signalStrength !== undefined
+                            ? `${capsmanAP.signalStrength} dBm`
+                            : "N/A"}
                         </motion.span>
                       </div>
                     </motion.div>
-                    
-                    <motion.div 
+
+                    <motion.div
                       className="flex justify-between"
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -445,7 +469,9 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                     >
                       <div>
                         <h4 className="text-sm font-medium">Kênh/Tần số</h4>
-                        <p className="text-sm text-muted-foreground">Kênh và tần số hoạt động</p>
+                        <p className="text-sm text-muted-foreground">
+                          Kênh và tần số hoạt động
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <motion.div
@@ -455,24 +481,26 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                             type: "spring",
                             stiffness: 260,
                             damping: 20,
-                            delay: 0.6
+                            delay: 0.6,
                           }}
                         >
                           <WifiIcon className="h-5 w-5 text-blue-500" />
                         </motion.div>
-                        <motion.span 
+                        <motion.span
                           className="font-medium"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.3, delay: 0.7 }}
                         >
-                          {capsmanAP.channel || 'N/A'} 
-                          {capsmanAP.frequency ? ` (${capsmanAP.frequency} MHz)` : ''}
+                          {capsmanAP.channel || "N/A"}
+                          {capsmanAP.frequency
+                            ? ` (${capsmanAP.frequency} MHz)`
+                            : ""}
                         </motion.span>
                       </div>
                     </motion.div>
-                    
-                    <motion.div 
+
+                    <motion.div
                       className="flex justify-between"
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -480,7 +508,9 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                     >
                       <div>
                         <h4 className="text-sm font-medium">Tốc độ</h4>
-                        <p className="text-sm text-muted-foreground">Tốc độ truyền/nhận dữ liệu</p>
+                        <p className="text-sm text-muted-foreground">
+                          Tốc độ truyền/nhận dữ liệu
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <motion.div
@@ -490,19 +520,23 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                             type: "spring",
                             stiffness: 260,
                             damping: 20,
-                            delay: 0.7
+                            delay: 0.7,
                           }}
                         >
                           <ServerIcon className="h-5 w-5 text-blue-500" />
                         </motion.div>
-                        <motion.div 
+                        <motion.div
                           className="text-right"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.3, delay: 0.8 }}
                         >
-                          <div className="font-medium">TX: {capsmanAP.txRate || 'N/A'}</div>
-                          <div className="font-medium">RX: {capsmanAP.rxRate || 'N/A'}</div>
+                          <div className="font-medium">
+                            TX: {capsmanAP.txRate || "N/A"}
+                          </div>
+                          <div className="font-medium">
+                            RX: {capsmanAP.rxRate || "N/A"}
+                          </div>
                         </motion.div>
                       </div>
                     </motion.div>
@@ -511,9 +545,9 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
               </motion.div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="performance">
-            <motion.div 
+            <motion.div
               className="space-y-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -525,7 +559,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <motion.div 
+                <motion.div
                   className="rounded-md border p-4"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -533,7 +567,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                   whileHover={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
                 >
                   <div className="space-y-2">
-                    <motion.h3 
+                    <motion.h3
                       className="text-sm font-medium"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -541,7 +575,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                     >
                       Thông số vô tuyến
                     </motion.h3>
-                    <motion.div 
+                    <motion.div
                       className="grid grid-cols-2 gap-2 text-sm"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -549,25 +583,39 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                     >
                       <div>
                         <span className="text-muted-foreground">Tín hiệu:</span>
-                        <p>{capsmanAP.signalStrength !== undefined ? `${capsmanAP.signalStrength} dBm` : 'N/A'}</p>
+                        <p>
+                          {capsmanAP.signalStrength !== undefined
+                            ? `${capsmanAP.signalStrength} dBm`
+                            : "N/A"}
+                        </p>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Nhiễu:</span>
-                        <p>{capsmanAP.noiseFloor !== undefined ? `${capsmanAP.noiseFloor} dBm` : 'N/A'}</p>
+                        <p>
+                          {capsmanAP.noiseFloor !== undefined
+                            ? `${capsmanAP.noiseFloor} dBm`
+                            : "N/A"}
+                        </p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Khoảng cách:</span>
-                        <p>{capsmanAP.distance || 'N/A'}</p>
+                        <span className="text-muted-foreground">
+                          Khoảng cách:
+                        </span>
+                        <p>{capsmanAP.distance || "N/A"}</p>
                       </div>
                       <div>
                         <span className="text-muted-foreground">CCQ:</span>
-                        <p>{capsmanAP.ccq !== undefined ? `${capsmanAP.ccq}%` : 'N/A'}</p>
+                        <p>
+                          {capsmanAP.ccq !== undefined
+                            ? `${capsmanAP.ccq}%`
+                            : "N/A"}
+                        </p>
                       </div>
                     </motion.div>
                   </div>
                 </motion.div>
-                
-                <motion.div 
+
+                <motion.div
                   className="rounded-md border p-4"
                   initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -575,7 +623,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                   whileHover={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
                 >
                   <div className="space-y-2">
-                    <motion.h3 
+                    <motion.h3
                       className="text-sm font-medium"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -583,29 +631,34 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
                     >
                       Hiệu suất truyền dữ liệu
                     </motion.h3>
-                    <motion.div 
+                    <motion.div
                       className="grid grid-cols-2 gap-2 text-sm"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.5 }}
                     >
                       <div>
-                        <span className="text-muted-foreground">Tốc độ TX:</span>
-                        <p>{capsmanAP.txRate || 'N/A'}</p>
+                        <span className="text-muted-foreground">
+                          Tốc độ TX:
+                        </span>
+                        <p>{capsmanAP.txRate || "N/A"}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Tốc độ RX:</span>
-                        <p>{capsmanAP.rxRate || 'N/A'}</p>
+                        <span className="text-muted-foreground">
+                          Tốc độ RX:
+                        </span>
+                        <p>{capsmanAP.rxRate || "N/A"}</p>
                       </div>
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                       className="pt-2"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.6 }}
                     >
                       <p className="text-xs text-muted-foreground">
-                        Chưa có dữ liệu thống kê hiệu suất theo thời gian cho Access Point này.
+                        Chưa có dữ liệu thống kê hiệu suất theo thời gian cho
+                        Access Point này.
                       </p>
                     </motion.div>
                   </div>
@@ -613,7 +666,7 @@ export default function CapsmanDetail({ deviceId, apId }: CapsmanDetailProps) {
               </motion.div>
             </motion.div>
           </TabsContent>
-          
+
           <TabsContent value="clients">
             <motion.div
               initial={{ opacity: 0, y: 10 }}

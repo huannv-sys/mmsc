@@ -1,47 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  CardFooter 
-} from '@/components/ui/card';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  Alert, 
-  AlertTitle, 
-  AlertDescription 
-} from '@/components/ui/alert';
-import { 
-  ShieldCheck, 
-  ShieldAlert, 
-  Activity, 
-  ArrowLeftRight, 
-  List, 
-  Router, 
-  Layers, 
-  Filter, 
-  TriangleAlert  
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { 
-  getAllRules, 
-  getFirewallRules, 
-  getNatRules, 
-  getMangleRules, 
-  getQueueRules, 
-  getRoutingRules 
-} from '@/services/rules';
-import { isDisabled } from '@/utils/mikrotik-helpers';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import {
+  ShieldCheck,
+  ShieldAlert,
+  Activity,
+  ArrowLeftRight,
+  List,
+  Router,
+  Layers,
+  Filter,
+  TriangleAlert,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  getAllRules,
+  getFirewallRules,
+  getNatRules,
+  getMangleRules,
+  getQueueRules,
+  getRoutingRules,
+} from "@/services/rules";
+import { isDisabled } from "@/utils/mikrotik-helpers";
 
 interface RulesListProps {
   deviceId: string;
@@ -65,16 +61,16 @@ interface Rule {
   [key: string]: any; // Để hỗ trợ các trường khác có thể có
 }
 
-type RuleType = 'firewall' | 'nat' | 'mangle' | 'queue' | 'routing' | 'all';
+type RuleType = "firewall" | "nat" | "mangle" | "queue" | "routing" | "all";
 
 export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
-  const [activeTab, setActiveTab] = useState<RuleType>('all');
+  const [activeTab, setActiveTab] = useState<RuleType>("all");
   const [rules, setRules] = useState<any>({
     firewall: [],
     nat: [],
     mangle: [],
     queues: { simpleQueues: [], treeQueues: [] },
-    routing: { routes: [], bgp: [], ospf: [] }
+    routing: { routes: [], bgp: [], ospf: [] },
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,16 +80,18 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await getAllRules(deviceId);
-        
+
         if (response.success && response.data) {
           setRules(response.data);
         } else {
-          setError(response.message || 'Không thể lấy dữ liệu quy tắc');
+          setError(response.message || "Không thể lấy dữ liệu quy tắc");
         }
       } catch (err) {
-        setError('Lỗi khi tải dữ liệu: ' + ((err as Error).message || String(err)));
+        setError(
+          "Lỗi khi tải dữ liệu: " + ((err as Error).message || String(err)),
+        );
       } finally {
         setLoading(false);
       }
@@ -106,53 +104,55 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       let response;
-      
+
       switch (type) {
-        case 'firewall':
+        case "firewall":
           response = await getFirewallRules(deviceId);
           if (response.success) {
-            setRules(prev => ({ ...prev, firewall: response.data }));
+            setRules((prev) => ({ ...prev, firewall: response.data }));
           }
           break;
-        case 'nat':
+        case "nat":
           response = await getNatRules(deviceId);
           if (response.success) {
-            setRules(prev => ({ ...prev, nat: response.data }));
+            setRules((prev) => ({ ...prev, nat: response.data }));
           }
           break;
-        case 'mangle':
+        case "mangle":
           response = await getMangleRules(deviceId);
           if (response.success) {
-            setRules(prev => ({ ...prev, mangle: response.data }));
+            setRules((prev) => ({ ...prev, mangle: response.data }));
           }
           break;
-        case 'queue':
+        case "queue":
           response = await getQueueRules(deviceId);
           if (response.success) {
-            setRules(prev => ({ ...prev, queues: response.data }));
+            setRules((prev) => ({ ...prev, queues: response.data }));
           }
           break;
-        case 'routing':
+        case "routing":
           response = await getRoutingRules(deviceId);
           if (response.success) {
-            setRules(prev => ({ ...prev, routing: response.data }));
+            setRules((prev) => ({ ...prev, routing: response.data }));
           }
           break;
-        case 'all':
+        case "all":
           response = await getAllRules(deviceId);
           if (response.success) {
             setRules(response.data);
           }
           break;
       }
-      
+
       if (response && !response.success) {
         setError(response.message || `Không thể lấy quy tắc ${type}`);
       }
     } catch (err) {
-      setError('Lỗi khi tải dữ liệu: ' + ((err as Error).message || String(err)));
+      setError(
+        "Lỗi khi tải dữ liệu: " + ((err as Error).message || String(err)),
+      );
     } finally {
       setLoading(false);
     }
@@ -161,11 +161,17 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
   const handleTabChange = (type: RuleType) => {
     setActiveTab(type);
     // Nếu chưa có dữ liệu hoặc dữ liệu trống, thì fetch lại
-    if ((type === 'firewall' && (!rules.firewall || rules.firewall.length === 0)) ||
-        (type === 'nat' && (!rules.nat || rules.nat.length === 0)) ||
-        (type === 'mangle' && (!rules.mangle || rules.mangle.length === 0)) ||
-        (type === 'queue' && (!rules.queues?.simpleQueues || rules.queues.simpleQueues.length === 0)) ||
-        (type === 'routing' && (!rules.routing?.routes || rules.routing.routes.length === 0))) {
+    if (
+      (type === "firewall" &&
+        (!rules.firewall || rules.firewall.length === 0)) ||
+      (type === "nat" && (!rules.nat || rules.nat.length === 0)) ||
+      (type === "mangle" && (!rules.mangle || rules.mangle.length === 0)) ||
+      (type === "queue" &&
+        (!rules.queues?.simpleQueues ||
+          rules.queues.simpleQueues.length === 0)) ||
+      (type === "routing" &&
+        (!rules.routing?.routes || rules.routing.routes.length === 0))
+    ) {
       fetchSpecificRules(type);
     }
   };
@@ -173,7 +179,11 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
   const getStatusBadge = (disabled?: boolean | string) => {
     // Sử dụng hàm isDisabled từ utils
     if (isDisabled(disabled)) {
-      return <Badge variant="outline" className="bg-gray-100">Vô hiệu</Badge>;
+      return (
+        <Badge variant="outline" className="bg-gray-100">
+          Vô hiệu
+        </Badge>
+      );
     } else {
       return <Badge variant="success">Hoạt động</Badge>;
     }
@@ -181,22 +191,25 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
 
   const getActionBadge = (action?: string) => {
     if (!action) return null;
-    
-    const actionMap: { [key: string]: { variant: string, label: string } } = {
-      'accept': { variant: 'success', label: 'Accept' },
-      'drop': { variant: 'destructive', label: 'Drop' },
-      'reject': { variant: 'destructive', label: 'Reject' },
-      'dstnat': { variant: 'outline', label: 'Dst NAT' },
-      'srcnat': { variant: 'outline', label: 'Src NAT' },
-      'masquerade': { variant: 'outline', label: 'Masquerade' },
-      'mark': { variant: 'outline', label: 'Mark' },
-      'return': { variant: 'info', label: 'Return' },
-      'jump': { variant: 'warning', label: 'Jump' },
-      'log': { variant: 'info', label: 'Log' }
+
+    const actionMap: { [key: string]: { variant: string; label: string } } = {
+      accept: { variant: "success", label: "Accept" },
+      drop: { variant: "destructive", label: "Drop" },
+      reject: { variant: "destructive", label: "Reject" },
+      dstnat: { variant: "outline", label: "Dst NAT" },
+      srcnat: { variant: "outline", label: "Src NAT" },
+      masquerade: { variant: "outline", label: "Masquerade" },
+      mark: { variant: "outline", label: "Mark" },
+      return: { variant: "info", label: "Return" },
+      jump: { variant: "warning", label: "Jump" },
+      log: { variant: "info", label: "Log" },
     };
-    
-    const config = actionMap[action.toLowerCase()] || { variant: 'default', label: action };
-    
+
+    const config = actionMap[action.toLowerCase()] || {
+      variant: "default",
+      label: action,
+    };
+
     return <Badge variant={config.variant as any}>{config.label}</Badge>;
   };
 
@@ -229,12 +242,12 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
         <TableBody>
           {rules.firewall.map((rule: Rule, index: number) => (
             <TableRow key={rule.id || index}>
-              <TableCell>{rule.chain || '-'}</TableCell>
+              <TableCell>{rule.chain || "-"}</TableCell>
               <TableCell>{getActionBadge(rule.action)}</TableCell>
-              <TableCell>{rule['src-address'] || '-'}</TableCell>
-              <TableCell>{rule['dst-address'] || '-'}</TableCell>
-              <TableCell>{rule.protocol || '-'}</TableCell>
-              <TableCell>{rule.comment || '-'}</TableCell>
+              <TableCell>{rule["src-address"] || "-"}</TableCell>
+              <TableCell>{rule["dst-address"] || "-"}</TableCell>
+              <TableCell>{rule.protocol || "-"}</TableCell>
+              <TableCell>{rule.comment || "-"}</TableCell>
               <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
             </TableRow>
           ))}
@@ -273,16 +286,16 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
         <TableBody>
           {rules.nat.map((rule: Rule, index: number) => (
             <TableRow key={rule.id || index}>
-              <TableCell>{rule.chain || '-'}</TableCell>
+              <TableCell>{rule.chain || "-"}</TableCell>
               <TableCell>{getActionBadge(rule.action)}</TableCell>
-              <TableCell>{rule['src-address'] || '-'}</TableCell>
-              <TableCell>{rule['dst-address'] || '-'}</TableCell>
-              <TableCell>{rule['to-addresses'] || '-'}</TableCell>
+              <TableCell>{rule["src-address"] || "-"}</TableCell>
+              <TableCell>{rule["dst-address"] || "-"}</TableCell>
+              <TableCell>{rule["to-addresses"] || "-"}</TableCell>
               <TableCell>
-                {rule.protocol || '-'}
-                {rule['dst-port'] ? `:${rule['dst-port']}` : ''}
+                {rule.protocol || "-"}
+                {rule["dst-port"] ? `:${rule["dst-port"]}` : ""}
               </TableCell>
-              <TableCell>{rule.comment || '-'}</TableCell>
+              <TableCell>{rule.comment || "-"}</TableCell>
               <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
             </TableRow>
           ))}
@@ -320,12 +333,12 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
         <TableBody>
           {rules.mangle.map((rule: Rule, index: number) => (
             <TableRow key={rule.id || index}>
-              <TableCell>{rule.chain || '-'}</TableCell>
+              <TableCell>{rule.chain || "-"}</TableCell>
               <TableCell>{getActionBadge(rule.action)}</TableCell>
-              <TableCell>{rule['src-address'] || '-'}</TableCell>
-              <TableCell>{rule['dst-address'] || '-'}</TableCell>
-              <TableCell>{rule['new-packet-mark'] || '-'}</TableCell>
-              <TableCell>{rule.comment || '-'}</TableCell>
+              <TableCell>{rule["src-address"] || "-"}</TableCell>
+              <TableCell>{rule["dst-address"] || "-"}</TableCell>
+              <TableCell>{rule["new-packet-mark"] || "-"}</TableCell>
+              <TableCell>{rule.comment || "-"}</TableCell>
               <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
             </TableRow>
           ))}
@@ -335,8 +348,10 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
   };
 
   const renderQueueRules = () => {
-    if ((!rules.queues?.simpleQueues || rules.queues.simpleQueues.length === 0) && 
-        (!rules.queues?.treeQueues || rules.queues.treeQueues.length === 0)) {
+    if (
+      (!rules.queues?.simpleQueues || rules.queues.simpleQueues.length === 0) &&
+      (!rules.queues?.treeQueues || rules.queues.treeQueues.length === 0)
+    ) {
       return (
         <Alert variant="info">
           <Layers className="h-4 w-4" />
@@ -367,11 +382,11 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
               <TableBody>
                 {rules.queues.simpleQueues.map((rule: Rule, index: number) => (
                   <TableRow key={rule.id || index}>
-                    <TableCell>{rule.name || '-'}</TableCell>
-                    <TableCell>{rule.target || '-'}</TableCell>
-                    <TableCell>{rule['max-limit'] || '-'}</TableCell>
-                    <TableCell>{rule['burst-limit'] || '-'}</TableCell>
-                    <TableCell>{rule.comment || '-'}</TableCell>
+                    <TableCell>{rule.name || "-"}</TableCell>
+                    <TableCell>{rule.target || "-"}</TableCell>
+                    <TableCell>{rule["max-limit"] || "-"}</TableCell>
+                    <TableCell>{rule["burst-limit"] || "-"}</TableCell>
+                    <TableCell>{rule.comment || "-"}</TableCell>
                     <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
                   </TableRow>
                 ))}
@@ -397,11 +412,11 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
               <TableBody>
                 {rules.queues.treeQueues.map((rule: Rule, index: number) => (
                   <TableRow key={rule.id || index}>
-                    <TableCell>{rule.name || '-'}</TableCell>
-                    <TableCell>{rule.parent || '-'}</TableCell>
-                    <TableCell>{rule['packet-mark'] || '-'}</TableCell>
-                    <TableCell>{rule.limit || '-'}</TableCell>
-                    <TableCell>{rule.priority || '-'}</TableCell>
+                    <TableCell>{rule.name || "-"}</TableCell>
+                    <TableCell>{rule.parent || "-"}</TableCell>
+                    <TableCell>{rule["packet-mark"] || "-"}</TableCell>
+                    <TableCell>{rule.limit || "-"}</TableCell>
+                    <TableCell>{rule.priority || "-"}</TableCell>
                     <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
                   </TableRow>
                 ))}
@@ -414,9 +429,11 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
   };
 
   const renderRoutingRules = () => {
-    if ((!rules.routing?.routes || rules.routing.routes.length === 0) && 
-        (!rules.routing?.bgp || rules.routing.bgp.length === 0) &&
-        (!rules.routing?.ospf || rules.routing.ospf.length === 0)) {
+    if (
+      (!rules.routing?.routes || rules.routing.routes.length === 0) &&
+      (!rules.routing?.bgp || rules.routing.bgp.length === 0) &&
+      (!rules.routing?.ospf || rules.routing.ospf.length === 0)
+    ) {
       return (
         <Alert variant="info">
           <Router className="h-4 w-4" />
@@ -447,11 +464,11 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
               <TableBody>
                 {rules.routing.routes.map((rule: Rule, index: number) => (
                   <TableRow key={rule.id || index}>
-                    <TableCell>{rule['dst-address'] || '-'}</TableCell>
-                    <TableCell>{rule.gateway || '-'}</TableCell>
-                    <TableCell>{rule['interface'] || '-'}</TableCell>
-                    <TableCell>{rule.distance || '-'}</TableCell>
-                    <TableCell>{rule.scope || '-'}</TableCell>
+                    <TableCell>{rule["dst-address"] || "-"}</TableCell>
+                    <TableCell>{rule.gateway || "-"}</TableCell>
+                    <TableCell>{rule["interface"] || "-"}</TableCell>
+                    <TableCell>{rule.distance || "-"}</TableCell>
+                    <TableCell>{rule.scope || "-"}</TableCell>
                     <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
                   </TableRow>
                 ))}
@@ -475,9 +492,9 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
               <TableBody>
                 {rules.routing.bgp.map((rule: Rule, index: number) => (
                   <TableRow key={rule.id || index}>
-                    <TableCell>{rule.name || '-'}</TableCell>
-                    <TableCell>{rule.as || '-'}</TableCell>
-                    <TableCell>{rule['router-id'] || '-'}</TableCell>
+                    <TableCell>{rule.name || "-"}</TableCell>
+                    <TableCell>{rule.as || "-"}</TableCell>
+                    <TableCell>{rule["router-id"] || "-"}</TableCell>
                     <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
                   </TableRow>
                 ))}
@@ -501,9 +518,9 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
               <TableBody>
                 {rules.routing.ospf.map((rule: Rule, index: number) => (
                   <TableRow key={rule.id || index}>
-                    <TableCell>{rule.name || '-'}</TableCell>
-                    <TableCell>{rule['router-id'] || '-'}</TableCell>
-                    <TableCell>{rule.redistribute || '-'}</TableCell>
+                    <TableCell>{rule.name || "-"}</TableCell>
+                    <TableCell>{rule["router-id"] || "-"}</TableCell>
+                    <TableCell>{rule.redistribute || "-"}</TableCell>
                     <TableCell>{getStatusBadge(rule.disabled)}</TableCell>
                   </TableRow>
                 ))}
@@ -517,15 +534,15 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
 
   const renderCurrentRules = () => {
     switch (activeTab) {
-      case 'firewall':
+      case "firewall":
         return renderFirewallRules();
-      case 'nat':
+      case "nat":
         return renderNatRules();
-      case 'mangle':
+      case "mangle":
         return renderMangleRules();
-      case 'queue':
+      case "queue":
         return renderQueueRules();
-      case 'routing':
+      case "routing":
         return renderRoutingRules();
       default:
         return (
@@ -566,48 +583,48 @@ export const RulesList: React.FC<RulesListProps> = ({ deviceId }) => {
       <CardContent>
         <div className="flex overflow-x-auto pb-2 mb-4">
           <Button
-            variant={activeTab === 'all' ? 'default' : 'outline'}
+            variant={activeTab === "all" ? "default" : "outline"}
             className="mr-2"
-            onClick={() => handleTabChange('all')}
+            onClick={() => handleTabChange("all")}
           >
             <Layers className="h-4 w-4 mr-2" />
             Tất cả quy tắc
           </Button>
           <Button
-            variant={activeTab === 'firewall' ? 'default' : 'outline'}
+            variant={activeTab === "firewall" ? "default" : "outline"}
             className="mr-2"
-            onClick={() => handleTabChange('firewall')}
+            onClick={() => handleTabChange("firewall")}
           >
             <ShieldCheck className="h-4 w-4 mr-2" />
             Firewall
           </Button>
           <Button
-            variant={activeTab === 'nat' ? 'default' : 'outline'}
+            variant={activeTab === "nat" ? "default" : "outline"}
             className="mr-2"
-            onClick={() => handleTabChange('nat')}
+            onClick={() => handleTabChange("nat")}
           >
             <ArrowLeftRight className="h-4 w-4 mr-2" />
             NAT
           </Button>
           <Button
-            variant={activeTab === 'mangle' ? 'default' : 'outline'}
+            variant={activeTab === "mangle" ? "default" : "outline"}
             className="mr-2"
-            onClick={() => handleTabChange('mangle')}
+            onClick={() => handleTabChange("mangle")}
           >
             <List className="h-4 w-4 mr-2" />
             Mangle
           </Button>
           <Button
-            variant={activeTab === 'queue' ? 'default' : 'outline'}
+            variant={activeTab === "queue" ? "default" : "outline"}
             className="mr-2"
-            onClick={() => handleTabChange('queue')}
+            onClick={() => handleTabChange("queue")}
           >
             <Activity className="h-4 w-4 mr-2" />
             Queue
           </Button>
           <Button
-            variant={activeTab === 'routing' ? 'default' : 'outline'}
-            onClick={() => handleTabChange('routing')}
+            variant={activeTab === "routing" ? "default" : "outline"}
+            onClick={() => handleTabChange("routing")}
           >
             <Router className="h-4 w-4 mr-2" />
             Routing
