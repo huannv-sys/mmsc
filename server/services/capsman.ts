@@ -93,7 +93,7 @@ export class CapsmanService {
           console.log(`Found ${capsmanAPData.length} CAPsMAN access points through direct command`);
         }
       } catch (accessPointError) {
-        console.warn(`Error getting access points directly, trying with remote-cap:`, accessPointError);
+        console.warn("Error getting access points directly, trying with remote-cap:", accessPointError);
         capsmanAPData = [];
       }
       
@@ -133,7 +133,7 @@ export class CapsmanService {
             console.log(`Created ${capsmanAPData.length} AP entries from CAP interfaces`);
           }
         } catch (interfaceError) {
-          console.warn(`Error getting interfaces for CAP detection:`, interfaceError);
+          console.warn("Error getting interfaces for CAP detection:", interfaceError);
         }
       }
       
@@ -151,9 +151,9 @@ export class CapsmanService {
       let capsmanConfig = [];
       try {
         capsmanConfig = await client.executeCommand('/caps-man/manager/print');
-        console.log(`CAPsMAN manager configuration:`, capsmanConfig);
+        console.log("CAPsMAN manager configuration:", capsmanConfig);
       } catch (configError) {
-        console.warn(`Could not get CAPsMAN manager configuration:`, configError);
+        console.warn("Could not get CAPsMAN manager configuration:", configError);
       }
       
       // Lấy thông tin các cấu hình không dây của CAPsMAN
@@ -162,7 +162,7 @@ export class CapsmanService {
         capsmanConfigs = await client.executeCommand('/caps-man/configuration/print');
         console.log(`Found ${capsmanConfigs.length} CAPsMAN configurations`);
       } catch (configsError) {
-        console.warn(`Could not get CAPsMAN configurations:`, configsError);
+        console.warn("Could not get CAPsMAN configurations:", configsError);
       }
       
       for (const ap of capsmanAPData) {

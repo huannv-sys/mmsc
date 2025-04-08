@@ -454,7 +454,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.deleteCapsmanAP(ap.id);
         }
       } catch (deleteError) {
-        console.error(`Lỗi khi xóa APs hiện có:`, deleteError);
+        console.error("Lỗi khi xóa APs hiện có:", deleteError);
         // Tiếp tục xử lý mặc dù có lỗi khi xóa
       }
       
@@ -492,7 +492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Nếu không có interfaces phù hợp, thử với tất cả interfaces wireless
       if (capInterfaces.length === 0) {
-        console.log(`Không tìm thấy interfaces phù hợp theo tên, tìm kiếm theo type...`);
+        console.log("Không tìm thấy interfaces phù hợp theo tên, tìm kiếm theo type...");
         
         // Lấy danh sách wireless interfaces
         try {
@@ -525,10 +525,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               await storage.createCapsmanAP(apData);
             }
           } else {
-            console.log(`Không tìm thấy wireless interfaces`);
+            console.log("Không tìm thấy wireless interfaces");
           }
         } catch (wirelessError) {
-          console.error(`Lỗi khi lấy wireless interfaces:`, wirelessError);
+          console.error("Lỗi khi lấy wireless interfaces:", wirelessError);
         }
       } else {
         // Tạo CapsmanAP cho mỗi interface đã lọc
@@ -561,7 +561,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       return capsmanAPs;
     } catch (error) {
-      console.error(`Lỗi trong quá trình tạo APs từ interfaces:`, error);
+      console.error("Lỗi trong quá trình tạo APs từ interfaces:", error);
       throw error;
     }
   }
@@ -637,16 +637,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Sử dụng hàm trợ giúp để tạo APs từ interfaces
           capsmanAPs = await createCapsmanAPsFromInterfaces(deviceId);
         } catch (error) {
-          console.error(`Lỗi khi tạo APs từ interfaces:`, error);
+          console.error("Lỗi khi tạo APs từ interfaces:", error);
           
           // Nếu không tạo được từ interfaces, thử thu thập thông tin CAPsMAN
           try {
-            console.log(`Thử thu thập thông tin CAPsMAN...`);
+            console.log("Thử thu thập thông tin CAPsMAN...");
             await capsmanService.collectCapsmanStats(deviceId);
             capsmanAPs = await capsmanService.getCapsmanAPs(deviceId);
             console.log(`Đã thu thập và tìm thấy ${capsmanAPs.length} CAPsMan APs`);
           } catch (collectError) {
-            console.error(`Lỗi khi thu thập thông tin CAPsMAN:`, collectError);
+            console.error("Lỗi khi thu thập thông tin CAPsMAN:", collectError);
           }
         }
       }
@@ -683,7 +683,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.deleteCapsmanAP(ap.id);
         }
       } catch (deleteError) {
-        console.error(`Lỗi khi xóa APs hiện có:`, deleteError);
+        console.error("Lỗi khi xóa APs hiện có:", deleteError);
       }
       
       // Lấy danh sách interfaces trực tiếp từ database
@@ -736,7 +736,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       } else {
-        console.log(`Không tìm thấy interfaces liên quan đến wireless`);
+        console.log("Không tìm thấy interfaces liên quan đến wireless");
       }
       
       // Đọc lại danh sách APs sau khi tạo
@@ -1023,7 +1023,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const discoveredCount = await mikrotikService.discoverDevices(subnet);
       return res.status(200).json({ 
-        message: `Network discovery completed`, 
+        message: "Network discovery completed", 
         discoveredCount 
       });
     } catch (error) {
