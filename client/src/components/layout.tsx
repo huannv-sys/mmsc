@@ -1,19 +1,27 @@
-import React from 'react';
-import { Link, useRoute } from 'wouter';
-import { CpuIcon, ServerIcon, WifiIcon, SettingsIcon, AlertCircleIcon, ListIcon, ShieldIcon } from 'lucide-react';
+import React from "react";
+import { Link, useRoute } from "wouter";
+import {
+  CpuIcon,
+  ServerIcon,
+  WifiIcon,
+  SettingsIcon,
+  AlertCircleIcon,
+  ListIcon,
+  ShieldIcon,
+} from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const [isOnDashboardPage] = useRoute('/');
-  const [isOnDevicesPage] = useRoute('/devices');
-  const [isOnWirelessPage] = useRoute('/wireless');
-  const [isOnCapsmanPage] = useRoute('/capsman');
-  const [isOnAlertsPage] = useRoute('/alerts');
-  const [isOnRulesPage] = useRoute('/rules');
-  const [isOnSecurityPage] = useRoute('/security');
+  const [isOnDashboardPage] = useRoute("/");
+  const [isOnDevicesPage] = useRoute("/devices");
+  const [isOnWirelessPage] = useRoute("/wireless");
+  const [isOnCapsmanPage] = useRoute("/capsman");
+  const [isOnAlertsPage] = useRoute("/alerts");
+  const [isOnRulesPage] = useRoute("/rules");
+  const [isOnSecurityPage] = useRoute("/security");
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -24,9 +32,11 @@ export function Layout({ children }: LayoutProps) {
         </div>
         <nav className="flex-1 p-4 space-y-2">
           <Link href="/">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnDashboardPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnDashboardPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <CpuIcon className="w-5 h-5" />
@@ -34,9 +44,11 @@ export function Layout({ children }: LayoutProps) {
             </a>
           </Link>
           <Link href="/devices">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnDevicesPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnDevicesPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <ServerIcon className="w-5 h-5" />
@@ -44,9 +56,11 @@ export function Layout({ children }: LayoutProps) {
             </a>
           </Link>
           <Link href="/wireless">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnWirelessPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnWirelessPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <WifiIcon className="w-5 h-5" />
@@ -54,9 +68,11 @@ export function Layout({ children }: LayoutProps) {
             </a>
           </Link>
           <Link href="/capsman">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnCapsmanPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnCapsmanPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <WifiIcon className="w-5 h-5" />
@@ -64,9 +80,11 @@ export function Layout({ children }: LayoutProps) {
             </a>
           </Link>
           <Link href="/alerts">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnAlertsPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnAlertsPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <AlertCircleIcon className="w-5 h-5" />
@@ -74,9 +92,11 @@ export function Layout({ children }: LayoutProps) {
             </a>
           </Link>
           <Link href="/rules">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnRulesPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnRulesPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <ListIcon className="w-5 h-5" />
@@ -84,9 +104,11 @@ export function Layout({ children }: LayoutProps) {
             </a>
           </Link>
           <Link href="/security">
-            <a 
+            <a
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
-                isOnSecurityPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                isOnSecurityPage
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
             >
               <ShieldIcon className="w-5 h-5" />
@@ -108,16 +130,16 @@ export function Layout({ children }: LayoutProps) {
         <div className="md:hidden flex items-center justify-between h-16 px-4 border-b">
           <h1 className="font-semibold">Mikrotik Monitor</h1>
           <button className="p-2 rounded-md hover:bg-accent/50">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="lucide lucide-menu"
             >
               <line x1="4" x2="20" y1="12" y2="12"></line>
@@ -126,9 +148,7 @@ export function Layout({ children }: LayoutProps) {
             </svg>
           </button>
         </div>
-        <div className="container mx-auto">
-          {children}
-        </div>
+        <div className="container mx-auto">{children}</div>
       </main>
     </div>
   );

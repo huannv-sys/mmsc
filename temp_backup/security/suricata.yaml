@@ -13,7 +13,7 @@ vars:
     DNS_SERVERS: "$HOME_NET"
     TELNET_SERVERS: "$HOME_NET"
     AIM_SERVERS: "$EXTERNAL_NET"
-    
+
   # Cổng phổ biến
   port-groups:
     HTTP_PORTS: "80"
@@ -121,5 +121,4 @@ app-layer:
         enabled: yes
       udp:
         enabled: yes
-    
 # Ghi chú: Phần này có thể được tùy chỉnh thêm tùy theo nhu cầu cụ thể
