@@ -234,7 +234,7 @@ class MikrotikClient {
     dateTo?: string;      // Ngày kết thúc
   } = {}): Promise<any[]> {
     try {
-      console.log(`Fetching logs with options:`, JSON.stringify(options));
+      console.log("Fetching logs with options:", JSON.stringify(options));
       const { topics = [], limit = 100, timeFrom, timeTo, dateFrom, dateTo } = options;
       
       // Xây dựng tham số truy vấn
@@ -246,7 +246,7 @@ class MikrotikClient {
       if (dateFrom) params['date-from'] = dateFrom;
       if (dateTo) params['date-to'] = dateTo;
 
-      console.log(`Executing command with params:`, JSON.stringify(params));
+      console.log("Executing command with params:", JSON.stringify(params));
       
       // Lấy log từ thiết bị
       let logs = await this.executeCommand('/log/print', [params]);
@@ -254,7 +254,7 @@ class MikrotikClient {
       
       // Lọc theo topics nếu được chỉ định
       if (topics.length > 0) {
-        console.log(`Filtering logs by topics:`, topics);
+        console.log("Filtering logs by topics:", topics);
         logs = logs.filter((log: any) => {
           if (!log.topics) return false;
           const logTopics = String(log.topics).split(',').map((t: string) => t.trim().toLowerCase());
@@ -264,14 +264,14 @@ class MikrotikClient {
       }
       
       if (logs.length > 0) {
-        console.log(`Sample log entry:`, JSON.stringify(logs[0]));
+        console.log("Sample log entry:", JSON.stringify(logs[0]));
       } else {
-        console.log(`No logs found with the specified filters`);
+        console.log("No logs found with the specified filters");
       }
       
       return logs;
     } catch (error) {
-      console.error(`Failed to get logs from device:`, error);
+      console.error("Failed to get logs from device:", error);
       throw new Error(`Không thể lấy logs từ thiết bị: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
@@ -688,7 +688,7 @@ export class MikrotikService {
       await this.createAlert(
         deviceId,
         alertSeverity.ERROR,
-        `Failed to connect to device on any port`,
+        "Failed to connect to device on any port",
         "connection"
       );
       
@@ -864,9 +864,9 @@ export class MikrotikService {
           
           // Kiểm tra cách 1: Kiểm tra CAPsMAN Manager
           try {
-            console.log(`Đang kiểm tra CAPsMAN manager...`);
+            console.log("Đang kiểm tra CAPsMAN manager...");
             const capsmanManagerData = await client.executeCommand('/caps-man/manager/print');
-            console.log(`CAPsMAN manager data:`, capsmanManagerData);
+            console.log("CAPsMAN manager data:", capsmanManagerData);
             
             if (Array.isArray(capsmanManagerData) && capsmanManagerData.length > 0) {
               const manager = capsmanManagerData[0];
@@ -884,14 +884,14 @@ export class MikrotikService {
               return true; // Thoát khỏi quá trình kiểm tra nếu đã xác định được
             }
           } catch (managerError) {
-            console.warn(`Không tìm thấy CAPsMAN manager:`, managerError);
+            console.warn("Không tìm thấy CAPsMAN manager:", managerError);
           }
           
           // Kiểm tra cách 2: Kiểm tra CAPsMAN Configuration
           try {
-            console.log(`Đang kiểm tra CAPsMAN configurations...`);
+            console.log("Đang kiểm tra CAPsMAN configurations...");
             const capsmanConfigData = await client.executeCommand('/caps-man/configuration/print');
-            console.log(`CAPsMAN configurations data:`, capsmanConfigData);
+            console.log("CAPsMAN configurations data:", capsmanConfigData);
             
             if (Array.isArray(capsmanConfigData) && capsmanConfigData.length > 0) {
               console.log(`Found ${capsmanConfigData.length} CAPsMAN configurations`);
@@ -900,14 +900,14 @@ export class MikrotikService {
               return true; // Thoát khỏi quá trình kiểm tra nếu đã xác định được
             }
           } catch (configError) {
-            console.warn(`Không tìm thấy CAPsMAN configurations:`, configError);
+            console.warn("Không tìm thấy CAPsMAN configurations:", configError);
           }
           
           // Kiểm tra cách 3: Kiểm tra CAPsMAN Access Points
           try {
-            console.log(`Đang kiểm tra CAPsMAN access-point...`);
+            console.log("Đang kiểm tra CAPsMAN access-point...");
             const capsmanAPData = await client.executeCommand('/caps-man/access-point/print');
-            console.log(`CAPsMAN access-point data:`, capsmanAPData);
+            console.log("CAPsMAN access-point data:", capsmanAPData);
             
             if (Array.isArray(capsmanAPData) && capsmanAPData.length > 0) {
               console.log(`Found ${capsmanAPData.length} CAPsMAN access points`);
@@ -916,14 +916,14 @@ export class MikrotikService {
               return true; // Thoát khỏi quá trình kiểm tra nếu đã xác định được
             }
           } catch (apError) {
-            console.warn(`Không tìm thấy CAPsMAN access-point:`, apError);
+            console.warn("Không tìm thấy CAPsMAN access-point:", apError);
           }
           
           // Kiểm tra cách 4: Kiểm tra CAPsMAN Interfaces
           try {
-            console.log(`Đang kiểm tra CAPsMAN interfaces...`);
+            console.log("Đang kiểm tra CAPsMAN interfaces...");
             const capsmanInterfaceData = await client.executeCommand('/caps-man/interface/print');
-            console.log(`CAPsMAN interface data:`, capsmanInterfaceData);
+            console.log("CAPsMAN interface data:", capsmanInterfaceData);
             
             if (Array.isArray(capsmanInterfaceData) && capsmanInterfaceData.length > 0) {
               console.log(`Found ${capsmanInterfaceData.length} CAPsMAN interfaces`);
@@ -932,7 +932,7 @@ export class MikrotikService {
               return true; // Thoát khỏi quá trình kiểm tra nếu đã xác định được
             }
           } catch (interfaceError) {
-            console.warn(`Không tìm thấy CAPsMAN interfaces:`, interfaceError);
+            console.warn("Không tìm thấy CAPsMAN interfaces:", interfaceError);
           }
           
           // Nếu không tìm thấy bất kỳ thành phần nào của CAPsMAN
@@ -1226,7 +1226,7 @@ export class MikrotikService {
           
           // Phân tích dữ liệu chi tiết về các luật
           for (const rule of filterRules) {
-            console.log(`Filter rule:`, rule);
+            console.log("Filter rule:", rule);
             
             if (rule.disabled === 'true' || rule.disabled === true) {
               disabledRules++;
@@ -1257,7 +1257,7 @@ export class MikrotikService {
           // });
         }
       } catch (filterError) {
-        console.warn(`Error collecting filter rules:`, filterError);
+        console.warn("Error collecting filter rules:", filterError);
       }
       
       // Thu thập luật tường lửa từ nat chi tiết
@@ -1275,7 +1275,7 @@ export class MikrotikService {
           let masqueradeRules = 0;
           
           for (const rule of natRules) {
-            console.log(`NAT rule:`, rule);
+            console.log("NAT rule:", rule);
             
             if (rule.disabled === 'true' || rule.disabled === true) {
               disabledNatRules++;
@@ -1300,7 +1300,7 @@ export class MikrotikService {
           console.log(`NAT breakdown: ${dstnatRules} DSTNAT, ${srcnatRules} SRCNAT (${masqueradeRules} masquerade)`);
         }
       } catch (natError) {
-        console.warn(`Error collecting NAT rules:`, natError);
+        console.warn("Error collecting NAT rules:", natError);
       }
       
       // Thu thập thông tin về Address List
@@ -1317,13 +1317,13 @@ export class MikrotikService {
           }
           
           // Hiển thị thông tin
-          console.log(`Address list statistics:`);
+          console.log("Address list statistics:");
           for (const [list, count] of listCounts.entries()) {
             console.log(`- ${list}: ${count} entries`);
           }
         }
       } catch (addrError) {
-        console.warn(`Error collecting address lists:`, addrError);
+        console.warn("Error collecting address lists:", addrError);
       }
       
       // Thu thập thông tin về Connection Tracking
@@ -1332,16 +1332,16 @@ export class MikrotikService {
           { 'count-only': '' }
         ]);
         
-        console.log(`Active connections:`, connections);
+        console.log("Active connections:", connections);
         
         // Lấy thống kê chi tiết về kết nối
         const connectionStats = await client.executeCommand('/ip/firewall/connection/print', [
           { 'stats': '' }
         ]);
         
-        console.log(`Connection statistics:`, connectionStats);
+        console.log("Connection statistics:", connectionStats);
       } catch (connError) {
-        console.warn(`Error collecting connection stats:`, connError);
+        console.warn("Error collecting connection stats:", connError);
       }
       
     } catch (error) {
@@ -1389,7 +1389,7 @@ export class MikrotikService {
         // Lấy thông tin cấu hình PPTP server
         const pptpConfig = await client.executeCommand('/interface/pptp-server/server/print');
         if (Array.isArray(pptpConfig)) {
-          console.log(`PPTP server configuration:`, pptpConfig);
+          console.log("PPTP server configuration:", pptpConfig);
           
           // Kiểm tra xem PPTP server có được kích hoạt không
           const pptpEnabled = pptpConfig.length > 0 && pptpConfig[0].enabled === 'true';
@@ -1423,7 +1423,7 @@ export class MikrotikService {
                 console.log(`Device ${deviceId} has ${pptpSecrets.length} PPTP accounts configured`);
               }
             } catch (secretErr) {
-              console.warn(`Error getting PPTP secrets:`, secretErr);
+              console.warn("Error getting PPTP secrets:", secretErr);
             }
           }
         }
@@ -1436,7 +1436,7 @@ export class MikrotikService {
         // Lấy thông tin cấu hình L2TP server
         const l2tpConfig = await client.executeCommand('/interface/l2tp-server/server/print');
         if (Array.isArray(l2tpConfig)) {
-          console.log(`L2TP server configuration:`, l2tpConfig);
+          console.log("L2TP server configuration:", l2tpConfig);
           
           // Kiểm tra xem L2TP server có được kích hoạt không
           const l2tpEnabled = l2tpConfig.length > 0 && l2tpConfig[0].enabled === 'true';
@@ -1470,7 +1470,7 @@ export class MikrotikService {
                 console.log(`Device ${deviceId} has ${l2tpSecrets.length} L2TP accounts configured`);
               }
             } catch (secretErr) {
-              console.warn(`Error getting L2TP secrets:`, secretErr);
+              console.warn("Error getting L2TP secrets:", secretErr);
             }
           }
         }
@@ -1483,7 +1483,7 @@ export class MikrotikService {
         // Lấy thông tin cấu hình SSTP server
         const sstpConfig = await client.executeCommand('/interface/sstp-server/server/print');
         if (Array.isArray(sstpConfig)) {
-          console.log(`SSTP server configuration:`, sstpConfig);
+          console.log("SSTP server configuration:", sstpConfig);
           
           // Kiểm tra xem SSTP server có được kích hoạt không
           const sstpEnabled = sstpConfig.length > 0 && sstpConfig[0].enabled === 'true';
@@ -1517,7 +1517,7 @@ export class MikrotikService {
                 console.log(`Device ${deviceId} has ${sstpSecrets.length} SSTP accounts configured`);
               }
             } catch (secretErr) {
-              console.warn(`Error getting SSTP secrets:`, secretErr);
+              console.warn("Error getting SSTP secrets:", secretErr);
             }
           }
         }
@@ -1530,7 +1530,7 @@ export class MikrotikService {
         // Lấy thông tin cấu hình OpenVPN server
         const ovpnServers = await client.executeCommand('/interface/ovpn-server/server/print');
         if (Array.isArray(ovpnServers)) {
-          console.log(`OpenVPN server configuration:`, ovpnServers);
+          console.log("OpenVPN server configuration:", ovpnServers);
           
           // Đếm số lượng máy chủ OpenVPN được kích hoạt
           const ovpnEnabled = ovpnServers.filter(s => s.enabled === 'true').length > 0;
@@ -1669,7 +1669,7 @@ export class MikrotikService {
       
       return devicesFound;
     } catch (error) {
-      console.error(`Error discovering devices:`, error);
+      console.error("Error discovering devices:", error);
       return 0;
     }
   }

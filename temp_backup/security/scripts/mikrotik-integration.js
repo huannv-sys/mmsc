@@ -185,7 +185,7 @@ async function addToBlocklist(conn, ip, timeout, comment) {
       
       return true;
     } catch (queryError) {
-      console.error(`Lỗi khi truy vấn danh sách địa chỉ:`, queryError);
+      console.error("Lỗi khi truy vấn danh sách địa chỉ:", queryError);
       return false;
     }
   } catch (error) {
@@ -233,7 +233,7 @@ async function removeFromBlocklist(conn, ip) {
         return false;
       }
     } catch (queryError) {
-      console.error(`Lỗi khi truy vấn danh sách địa chỉ:`, queryError);
+      console.error("Lỗi khi truy vấn danh sách địa chỉ:", queryError);
       return false;
     }
   } catch (error) {
